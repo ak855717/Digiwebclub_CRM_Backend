@@ -20,7 +20,7 @@ app.use('/api', followUpRoutes);
 connectDb().then(() => {
   if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
-      console.log(`MVC Backend server is running on http://localhost:${PORT}`);
+      console.log(`MVC Backend server is running `);
     });
   }
 }).catch(console.error);
