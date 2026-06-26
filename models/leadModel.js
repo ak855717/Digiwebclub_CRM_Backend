@@ -21,7 +21,9 @@ const leadSchema = new mongoose.Schema({
   trophy1: { type: String },
   trophy2: { type: String },
   award: { type: String },
-  status: { type: String, default: 'New' }
+  status: { type: String, default: 'New' },
+  createdBy: { type: String },
+  updatedBy: { type: String }
 }, { strict: false, timestamps: true });
 
 module.exports = mongoose.model('Lead', leadSchema);

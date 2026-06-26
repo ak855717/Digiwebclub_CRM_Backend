@@ -18,7 +18,12 @@ const getLeads = async (req, res) => {
 // @access  Public
 const createLead = async (req, res) => {
   try {
-    const lead = await Lead.create(req.body);
+    const leadData = {
+      ...req.body,
+      createdBy: req.user ? req.user.name : 'System',
+      updatedBy: req.user ? req.user.name : 'System',
+    };
+    const lead = await Lead.create(leadData);
     res.status(201).json({ success: true, lead });
   } catch (error) {
     console.error('Error creating lead:', error);
@@ -31,7 +36,11 @@ const createLead = async (req, res) => {
 // @access  Public
 const updateLead = async (req, res) => {
   try {
-    const lead = await Lead.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = {
+      ...req.body,
+      updatedBy: req.user ? req.user.name : 'System',
+    };
+    const lead = await Lead.findByIdAndUpdate(req.params.id, updateData, {
       returnDocument: 'after',
       runValidators: true,
     });

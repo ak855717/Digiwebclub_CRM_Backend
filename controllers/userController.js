@@ -94,6 +94,20 @@ const getUsers = async (req, res) => {
   }
 };
 
+// Controller handling total user count fetching
+const getUsersCount = async (req, res) => {
+  try {
+    const count = await User.countDocuments({ isActive: true });
+    return res.json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.error('getUsersCount controller error:', error);
+    return res.status(500).json({ success: false, error: 'An internal server error occurred.' });
+  }
+};
+
 // Controller handling user role updating by administrator
 const updateUserRole = async (req, res) => {
   try {
@@ -202,6 +216,7 @@ module.exports = {
   loginUser,
   createUser,
   getUsers,
+  getUsersCount,
   updateUserRole,
   updateUserPassword,
   updateUserPermissions,
