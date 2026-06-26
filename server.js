@@ -8,7 +8,14 @@ const followUpRoutes = require('./routes/followUpRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+const corsOptions = {
+  origin: [
+    process.env.FRONTEND_URL || 'https://digiwebclub-crm.vercel.app',
+    'http://localhost:3000'
+  ],
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Load MVC routes
