@@ -21,6 +21,8 @@ async function connectDb() {
         name: 'Administrator',
         userId: 'admin',
         employeeId: 'EMP-ADMIN',
+        email: 'ak855717@gmail.com',
+        phonenumber: '9582687448',
         password: hashedPassword,
         role: 'admin',
       });

@@ -2,11 +2,14 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 
 // Controller handling user login logic
-  const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { userId, password } = req.body;
-    if (!userId || !password) {
-      return res.status(400).json({ success: false, error: 'User ID and password are required.' });
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User ID are required.' });
+    }
+    if (!password) {
+      return res.status(400).json({ success: false, error: 'Password are required.' });
     }
 
     const user = await User.findOne({ userId });
@@ -20,6 +23,10 @@ const bcrypt = require('bcryptjs');
       return res.status(401).json({ success: false, error: 'Invalid user ID or password.' });
     }
 
+    if (!user.isActive) {
+      return res.status(401).json({ success: false, error: 'Your account has been deactivated. Please contact the administrator.' });
+    }
+
     return res.json({
       success: true,
       user: {
@@ -27,7 +34,10 @@ const bcrypt = require('bcryptjs');
         name: user.name,
         userId: user.userId,
         employeeId: user.employeeId,
+        email: user.email,
+        phonenumber: user.phonenumber,
         role: user.role,
+        isActive: user.isActive,
         permissions: user.permissions,
       },
     });
@@ -40,9 +50,9 @@ const bcrypt = require('bcryptjs');
 // Controller handling user creation by administrator
 const createUser = async (req, res) => {
   try {
-    const { name, employeeId, userId, password, role } = req.body;
-    if (!name || !employeeId || !userId || !password) {
-      return res.status(400).json({ success: false, error: 'All fields (name, employeeId, userId, password) are required.' });
+    const { name, employeeId, userId, email, phonenumber, password, role } = req.body;
+    if (!name || !employeeId || !userId || !email || !phonenumber || !password) {
+      return res.status(400).json({ success: false, error: 'All fields (name, employeeId, userId, email, phonenumber, password) are required.' });
     }
 
     const existingUser = await User.findOne({ userId });
@@ -54,10 +64,12 @@ const createUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await User.create({ 
-      name, 
-      employeeId, 
-      userId, 
+    await User.create({
+      name,
+      employeeId,
+      userId,
+      email,
+      phonenumber,
       password: hashedPassword,
       role: role || 'employee'
     });
@@ -113,6 +125,8 @@ const updateUserRole = async (req, res) => {
         id: updatedUser._id.toString(),
         name: updatedUser.name,
         userId: updatedUser.userId,
+        email: updatedUser.email,
+        phonenumber: updatedUser.phonenumber,
         employeeId: updatedUser.employeeId,
         role: updatedUser.role,
         permissions: updatedUser.permissions,
