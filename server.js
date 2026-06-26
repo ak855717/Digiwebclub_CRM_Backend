@@ -17,12 +17,15 @@ app.use('/api', leadRoutes);
 app.use('/api', followUpRoutes);
 
 // Establish database connection and start Express listening
-connectDb().then(() => {
-  if (process.env.NODE_ENV !== 'production') {
+connectDb()
+  .then(() => {
     app.listen(PORT, () => {
-      console.log(`MVC Backend server is running `);
+      console.log(`MVC Backend server is running on port ${PORT}`);
     });
-  }
-}).catch(console.error);
+  })
+  .catch((err) => {
+    console.error("Database connection failed:", err);
+    process.exit(1);
+  });
 
 module.exports = app;

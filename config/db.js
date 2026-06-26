@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const MONGODB_URI = 'mongodb+srv://inotebook:ayush2004@inotebook.ogkw3y9.mongodb.net/?appName=inotebook/Digiwebclub_calling';
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb+srv://inotebook:ayush2004@inotebook.ogkw3y9.mongodb.net/Digiwebclub_CRM?appName=inotebook';
 
 async function connectDb() {
   try {
