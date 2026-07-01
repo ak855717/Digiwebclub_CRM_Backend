@@ -74,9 +74,69 @@ const deleteLead = async (req, res) => {
   }
 };
 
+// @desc    Add a remark to a lead
+// @route   POST /api/leads/:id/remarks
+// @access  Public
+const addRemark = async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ success: false, error: 'Remark text is required' });
+    }
+
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ success: false, error: 'Lead not found' });
+    }
+
+    const addedBy = req.user ? req.user.name : (req.headers['x-user-name'] || req.body.addedBy || 'System');
+    const newRemark = {
+      text: text.trim(),
+      addedBy,
+      createdAt: new Date()
+    };
+
+    if (!lead.remarks) {
+      lead.remarks = [];
+    }
+
+    lead.remarks.push(newRemark);
+    await lead.save();
+
+    res.status(201).json({ success: true, lead, remark: newRemark });
+  } catch (error) {
+    console.error('Error adding remark:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+// @desc    Delete a remark from a lead
+// @route   DELETE /api/leads/:id/remarks/:remarkId
+// @access  Public
+const deleteRemark = async (req, res) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ success: false, error: 'Lead not found' });
+    }
+
+    lead.remarks = (lead.remarks || []).filter(
+      r => r._id && r._id.toString() !== req.params.remarkId
+    );
+    await lead.save();
+
+    res.json({ success: true, lead });
+  } catch (error) {
+    console.error('Error deleting remark:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
 module.exports = {
   getLeads,
   createLead,
   updateLead,
   deleteLead,
+  addRemark,
+  deleteRemark,
 };

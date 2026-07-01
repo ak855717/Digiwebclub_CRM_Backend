@@ -22,6 +22,11 @@ const leadSchema = new mongoose.Schema({
   trophy2: { type: String },
   award: { type: String },
   status: { type: String, default: 'New' },
+  remarks: [{
+    text: { type: String, required: true },
+    addedBy: { type: String },
+    createdAt: { type: Date, default: Date.now }
+  }],
   createdBy: { type: String },
   updatedBy: { type: String }
 }, { strict: false, timestamps: true });
