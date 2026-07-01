@@ -15,6 +15,6 @@ router.route('/leads/:id/remarks')
   .post(userAuth, addRemark);
 
 router.route('/leads/:id/remarks/:remarkId')
-  .delete(userAuth, deleteRemark);
+  .delete(adminAuth, deleteRemark);
 
 module.exports = router;
